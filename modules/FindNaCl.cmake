@@ -24,7 +24,7 @@ if (NOT NACL_FOUND)
         NO_DEFAULT_PATH
     )
     if (NACL_INCLUDE_DIRS AND NACL_LIBRARIES)
-        message(STATUS "libnacl found")
+        message(STATUS "Found NaCl")
         set(NACL_FOUND TRUE)
     endif()
 endif()

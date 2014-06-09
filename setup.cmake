@@ -4,6 +4,8 @@
 if (NOT __cmake_setup_INCLUDED)
 set(__cmake_setup_INCLUDED 1)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
 # Build in 64 bits mode by default... @fixme
 set(CMAKE_CXX_FLAGS "-m64 ${CMAKE_CXX_FLAGS}")
 
@@ -102,19 +104,9 @@ if (TEST_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 endif (TEST_COVERAGE)
 
-# On mac, use openssl from brew, not the default system one, because it is too old.
-# Run 'brew install openssl' to install it.
-if (APPLE)
-    set(OPENSSL_ROOT_DIR /usr/local/opt/openssl)
-    # Set pkg-config path in case pkg-config is installed on the machine.
-    set(ENV{PKG_CONFIG_PATH} /usr/local/opt/openssl/lib/pkgconfig)
-    # A bug in cmake prevents use of OPENSSL_ROOT_DIR for finding a custom openssl,
-    # so we use an internal variable instead. This needs to be fixed in cmake.
-    set(_OPENSSL_ROOT_HINTS_AND_PATHS PATHS /usr/local/opt/openssl)
-endif (APPLE)
-
-find_package(OpenSSL REQUIRED)
-include_directories(${OPENSSL_INCLUDE_DIR})
+include(FindNaCl)
+include(FindSodium)
+include_directories(${NACL_INCLUDE_DIRS} ${SODIUM_INCLUDE_DIRS})
 
 set(BOOST_COMPONENTS)
 
