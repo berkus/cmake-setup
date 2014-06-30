@@ -104,9 +104,8 @@ if (TEST_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 endif (TEST_COVERAGE)
 
-include(FindNaCl)
 include(FindSodium)
-include_directories(${NACL_INCLUDE_DIRS} ${SODIUM_INCLUDE_DIRS})
+include_directories(${SODIUM_INCLUDE_DIRS})
 
 set(BOOST_COMPONENTS)
 
