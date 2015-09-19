@@ -18,6 +18,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parame
 
 # Nasty boost.unit_test_framework
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unneeded-internal-declaration")
+# Nasty boost.asio unused typedefs
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
 
 # Test effect of global constructors in our code, global constructors are usually bad idea.
 # Cannot be enabled because boost uses them in boost.error_code
