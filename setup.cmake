@@ -139,7 +139,7 @@ function(create_test NAME)
     add_executable(test_${NAME} test_${NAME}.cpp)
     target_link_libraries(test_${NAME} ${CT_LIBS} ${Boost_LIBRARIES})
     if (UNIX AND NOT APPLE)
-        target_link_libraries(test_${NAME} c++)
+        target_link_libraries(test_${NAME} pthread)
     endif()
     install(TARGETS test_${NAME}
         RUNTIME DESTINATION tests/unittests)
