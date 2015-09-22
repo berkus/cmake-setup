@@ -4,30 +4,6 @@
 if (NOT __cmake_setup_INCLUDED)
 set(__cmake_setup_INCLUDED 1)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
-
-# Build in 64 bits mode by default... @fixme
-set(CMAKE_CXX_FLAGS "-m64 ${CMAKE_CXX_FLAGS}")
-
-# Enable C++17 and link libc++
-set(CMAKE_CXX_FLAGS "-ferror-limit=3 ${CMAKE_CXX_FLAGS} -std=c++1z -stdlib=libc++")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
-
-# Enable full error and warning reporting
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-unused-parameter")
-
-# Nasty boost.unit_test_framework
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unneeded-internal-declaration")
-# Nasty boost.asio unused typedefs
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
-
-# Test effect of global constructors in our code, global constructors are usually bad idea.
-# Cannot be enabled because boost uses them in boost.error_code
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wglobal-constructors")
-
-# Clang invocation debug
-#set(CMAKE_CXX_FLAGS "-v ${CMAKE_CXX_FLAGS}")
-
 option(CLANG "Build using clang." ON)
 option(CLANG_GIT "[developer] Build using clang-git." OFF)
 option(CLANG_ASAN "Use clang's address-sanitizer." OFF)
@@ -38,12 +14,39 @@ option(CLANG_USAN "Use clang's UB-sanitizer." OFF)
 option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF)
 option(CLANG_CHECK_DOCS "[developer] Check documentation consistency using -Wdocumentation" OFF)
 option(CLANG_ANALYZE "[developer] Run clang in static analyzer mode." OFF)
+option(CLANG_DEBUG "[developer] Debug clang invocations." OFF)
 
 option(TRAVIS_CI "Build on Travis-CI nodes (disables some warnings)" OFF)
 option(TEST_COVERAGE "Enable coverage information generation by the compiler" OFF)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+
+# Enable C++17
+set(CMAKE_CXX_FLAGS "-ferror-limit=3 ${CMAKE_CXX_FLAGS} -std=c++1z")
+
+# and link libc++
+if (APPLE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+endif()
+
+# Enable full error and warning reporting
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+
+# Test effect of global constructors in our code, global constructors are usually bad idea.
+# Cannot be enabled because boost uses them in boost.error_code
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wglobal-constructors")
+
 if (CLANG)
+    # Nasty boost.unit_test_framework
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unneeded-internal-declaration")
+    # Nasty boost.asio unused typedefs
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef")
+
     set(_extraFlags)
+    if (CLANG_DEBUG)
+        set(_extraFlags "-v")
+    endif()
     if (CLANG_ANALYZE)
         set(_extraFlags "${_extraFlags} --analyze -Xanalyzer -analyzer-output=text")
     endif ()
@@ -67,6 +70,7 @@ if (CLANG)
     if (CLANG_CHECK_DOCS)
         set(_extraFlags "${_extraFlags} -Wdocumentation")
     endif ()
+    # Some unused arguments here and there
     set(_extraFlags "${_extraFlags} -Wno-unused-parameter -Wno-unused-private-field")
 
     if (CLANG_LTO)
