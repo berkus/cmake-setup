@@ -130,12 +130,7 @@ if (UNIX AND NOT APPLE)
     list(APPEND BOOST_COMPONENTS filesystem)
 endif (UNIX AND NOT APPLE)
 
-#set(Boost_USE_MULTITHREAD ON)
-set(Boost_USE_STATIC_LIBS ON) # Easier to deploy elsewhere
-set(BOOST_ROOT /usr/local/opt/boost)
-set(BOOST_LIBRARYDIR /usr/local/opt/boost/lib64)
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
-
 include_directories(${Boost_INCLUDE_DIR})
 
 # Create and link a test application.
