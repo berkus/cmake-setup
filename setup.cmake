@@ -132,9 +132,15 @@ list(APPEND BOOST_COMPONENTS thread)
 # Filesystem library used on Linux for creating config directories
 list(APPEND BOOST_COMPONENTS filesystem)
 
+list(APPEND BOOST_COMPONENTS iostreams)
+list(APPEND BOOST_COMPONENTS log)
+
 set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 include_directories(${Boost_INCLUDE_DIR})
+
+# For zlib-compressed iostreams
+list(APPEND Boost_LIBRARIES z)
 
 # Create and link a test application.
 function(create_test NAME)
